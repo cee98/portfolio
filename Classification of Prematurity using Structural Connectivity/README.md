@@ -27,3 +27,7 @@ Accuracy, Sensitivity, Specificity, Recall
 
 ## Summary of Results:
 .....
+
+## Limitations:
+
+
