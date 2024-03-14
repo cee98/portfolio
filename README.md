@@ -1,8 +1,8 @@
 # Aspiring Data Scientist
 
 ### Education
-MSc in Healthcare Technologies (specialising in Machine Learning)
-BSc in Neuroscience
+- MSc in Healthcare Technologies (specialising in Machine Learning)
+- BSc in Neuroscience
 
 ### Projects
 Clasification of Prematurity Using Structural Connectivity
