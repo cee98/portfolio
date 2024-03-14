@@ -1,7 +1,10 @@
 # Classification of Prematurity using Structural Connectivity
 
 ## Problem description:
-To predict whether the baby is born preterm from the structural connectivity matrices.
+To predict whether the baby is born preterm from the structural connectivity matrices, which are a measure of connectivity between pairs of brain regions. 
+
+## Feature variables:
+There is 90 regions and matrices have 90x90 values. They are symmetric and have zeros on the diagonal (the connectivity of a region with itself is not meaningful).
 
 ## Target variables:
 1 - premature <br>
