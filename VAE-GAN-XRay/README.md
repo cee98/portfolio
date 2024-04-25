@@ -3,4 +3,4 @@ Implementing and validating a VAE-GAN as per the original paper by ABL Larsen et
 
 ## Sample of Results
 
-![image](https://github.com/cee98/VAE-GAN-XRay/assets/112065175/b90598d1-0289-4a2e-9bad-c3783644217e)
+<img width="805" alt="Screenshot 2024-04-25 at 11 39 02" src="https://github.com/cee98/portfolio/assets/112065175/d81e2f17-14c3-4fec-a063-d94519e70f33">
