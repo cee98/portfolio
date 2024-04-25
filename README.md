@@ -20,3 +20,9 @@
 - Implementing and validating a VAE-GAN as per the original paper by ABL Larsen et al.
 <img width="805" alt="Screenshot 2024-04-25 at 11 39 02" src="https://github.com/cee98/portfolio/assets/112065175/d81e2f17-14c3-4fec-a063-d94519e70f33">
 
+### 4. Deliniating White Matter in Brain MRI [click here](https://github.com/cee98/portfolio/tree/main/Deliniating%20White%20Matter%20in%20Brain%20MRI)
+- The aim of this project is to apply registration and segmentation techniques to delieate white matter in a brain MRI image.
+<img width="622" alt="Screenshot 2024-04-25 at 12 46 12" src="https://github.com/cee98/portfolio/assets/112065175/d46e5566-32d9-497b-8865-9a0c321b4687">
+<img width="649" alt="Screenshot 2024-04-25 at 12 48 00" src="https://github.com/cee98/portfolio/assets/112065175/a0f81277-fbc0-433a-81ef-a1fc50b01bc1">
+
+
