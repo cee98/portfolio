@@ -1,0 +1,72 @@
+# Define the directory where the final model checkpoints are saved
+checkpoint_dir = '/content/drive/MyDrive/ImagesHands/best_model/'
+
+
+# Load the saved model checkpoints
+gen.encoder.load_state_dict(torch.load(os.path.join(checkpoint_dir, 'encoder_best.pt')))
+gen.decoder.load_state_dict(torch.load(os.path.join(checkpoint_dir, 'decoder_best.pt')))
+discriminator.load_state_dict(torch.load(os.path.join(checkpoint_dir, 'discriminator_best.pt')))
+encoder_optimiser.load_state_dict(torch.load(os.path.join(checkpoint_dir, 'encoder_optimiser_best.pt')))
+decoder_optimiser.load_state_dict(torch.load(os.path.join(checkpoint_dir, 'decoder_optimiser_best.pt')))
+discrim_optimiser.load_state_dict(torch.load(os.path.join(checkpoint_dir, 'discrim_optimiser_best.pt')))
+
+test_batch = next(iter(test_loader))
+test_batch = test_batch / 255.0
+print(test_batch.size())
+
+load_save_img("test" ,make_grid((test_batch[0]*0.5+0.5).cpu(),4))
+
+import torch
+import matplotlib.pyplot as plt
+
+# Initialize variables to accumulate the MSE and count the number of test images
+total_mse = 0
+num_images = 0
+
+for test_batch in test_loader:
+    # Preprocess the test_batch if needed (e.g., scaling to [0, 1])
+    test_batch = test_batch / 255.0
+
+    # Convert the test batch to a tensor and move it to the device
+    input_data = Variable(test_batch).to(device, dtype=torch.float)
+
+    # Pass the input data through the encoder to obtain the encoded representation
+    encoded_data_tuple = gen.encoder(input_data)
+    encoded_data = encoded_data_tuple[0]  # Assuming the tensor is the first element of the tuple
+
+    # Pass the encoded representation through the decoder to obtain the reconstructed image
+    reconstructed_data = gen.decoder(encoded_data)
+
+
+
+    # Resize the reconstructed_data to match the input_data size
+    reconstructed_data_resized = F.interpolate(reconstructed_data, size=(128, 128), mode='bilinear', align_corners=False)
+
+    # Calculate MSE for the current image
+    mse = ((input_data - reconstructed_data_resized) ** 2).mean().item()
+    reconstruction_loss = nn.MSELoss()(reconstructed_data_resized, input_data)
+
+    print(f"MSE for batch is {mse}")
+
+    # Accumulate the MSE and increment the count of test images
+    total_mse += mse
+    num_images += input_data.size(0)
+
+    # Optionally, you can display the input and reconstructed images for visual inspection
+    fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+    axes[0].imshow(np.transpose(input_data[0].cpu().detach().numpy(), (1, 2, 0)), cmap='gray')
+    axes[0].set_title("Input Image")
+    axes[1].imshow(np.transpose(reconstructed_data_resized[0].cpu().detach().numpy(), (1, 2, 0)), cmap='gray')
+    axes[1].set_title("Reconstructed Image")
+    for ax in axes:
+        ax.axis('off')
+    plt.show()
+
+    print(f"MSE loss: {reconstruction_loss}")
+
+# Calculate the average MSE
+average_mse = total_mse / num_images
+
+# Print the average MSE for all test images
+print(f"Average Mean Squared Error (MSE) for {num_images} test images: {average_mse}")
+

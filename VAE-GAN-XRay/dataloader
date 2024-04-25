@@ -1,0 +1,62 @@
+class NiftiDataset(torch.utils.data.Dataset):
+
+    """
+    Class to create custom PyTorch dataset for NIfTI images
+
+    Args:
+    ----------
+    - dataroot : str
+      Path to the directory containing NIfTI image files
+
+    - transform : boolean
+      Boolean flag that determines whether to apply transformations to the loaded images.
+
+    Returns:
+    -------
+    - torch.utils.data.Dataset: A dataset with transformed NIfTI images.
+    """
+
+    def __init__(self, dataroot, transform=None):
+        self.dataroot = dataroot
+        self.transform = transform
+        self.nifti_files = glob.glob(os.path.join(dataroot, '*.nii.gz'))
+
+    def __len__(self):
+        return len(self.nifti_files)
+
+    def __getitem__(self, idx):
+        nifti_file = self.nifti_files[idx]
+        image = nib.load(nifti_file).get_fdata()
+
+        if self.transform:
+            image = self.transform(image)  # Apply the transformation here
+
+        return image
+
+
+def dataloader(batch_size):
+    dataroot = "/content/drive/MyDrive/ImagesHands"
+    transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Resize(128),
+        transforms.Normalize((0.5,), (0.5,))
+    ])
+
+    # Load the dataset
+    dataset = NiftiDataset(dataroot, transform=transform)
+
+    # Split the dataset into training and testing sets
+    train_size = 0.8  # 80% for training
+    test_size = 0.2   # 20% for testing
+    train_dataset, test_dataset = train_test_split(dataset, train_size=train_size, test_size=test_size, random_state=42)
+
+    # Create data loaders for training and testing
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+
+    #print number of training and testing images
+
+    print(f"Training samples: {len(train_dataset)}")
+    print(f"Testing samples: {len(test_dataset)}")
+
+    return train_loader, test_loader

@@ -1,0 +1,153 @@
+class Encoder(nn.Module):
+
+    """
+    Encoder network for VAE.
+
+    This class defines the architecture of the encoder network, which takes an input tensor and produces
+    the mean and log variance of the latent space.
+
+    Attributes:
+        conv1 (nn.Conv2d): First convolutional layer with 1 input channel and 128 output channels.
+        bn1 (nn.BatchNorm2d): Batch normalization layer after the first convolution.
+        conv2 (nn.Conv2d): Second convolutional layer with 128 input channels and 128 output channels.
+        bn2 (nn.BatchNorm2d): Batch normalization layer after the second convolution.
+        conv3 (nn.Conv2d): Third convolutional layer with 128 input channels and 256 output channels.
+        bn3 (nn.BatchNorm2d): Batch normalization layer after the third convolution.
+        relu (nn.LeakyReLU): Leaky ReLU activation function with a negative slope of 0.2.
+        fc1 (nn.Linear): Fully connected layer with 256*16*16 input features and 2048 output features.
+        bn4 (nn.BatchNorm1d): Batch normalization layer after the fully connected layer.
+        fc_mean (nn.Linear): Fully connected layer to compute the mean of the latent space (128-dimensional).
+        fc_log_variance (nn.Linear): Fully connected layer to compute the log variance of the latent space (128-dimensional).
+
+    Methods:
+        forward(x): Forward pass through the encoder network.
+
+    Returns:
+        Tuple[torch.Tensor, torch.Tensor]: A tuple containing the mean and log variance of the latent space.
+    """
+
+
+    def __init__(self):
+        super(Encoder, self).__init__()
+        # in_channels=1
+        self.conv1 = nn.Conv2d(1, 128, 5, padding=2, stride=2)
+        self.bn1 = nn.BatchNorm2d(128, momentum=0.9)
+        self.conv2 = nn.Conv2d(128, 128, 5, padding=2, stride=2)
+        self.bn2 = nn.BatchNorm2d(128, momentum=0.9)
+        self.conv3 = nn.Conv2d(128, 256, 5, padding=2, stride=2)
+        self.bn3 = nn.BatchNorm2d(256, momentum=0.9)
+        self.relu = nn.LeakyReLU(0.2)
+        self.fc1 = nn.Linear(256 * 16 * 16, 2048)
+        self.bn4 = nn.BatchNorm1d(2048, momentum=0.9)
+        self.fc_mean = nn.Linear(2048, 128)
+        #latent dim=128
+        self.fc_log_variance = nn.Linear(2048, 128)
+
+    def forward(self, x):
+
+        """
+        Forward pass of the encoder network.
+
+        Args:
+            x (torch.Tensor): Input tensor, typically an image.
+
+        Returns:
+            mean (torch.Tensor): Mean of the latent space distribution.
+            log_variance (torch.Tensor): Log variance of the latent space distribution.
+        """
+
+        batch_size = x.size()[0]
+        out = self.relu(self.bn1(self.conv1(x)))
+        out = self.relu(self.bn2(self.conv2(out)))
+        out = self.relu(self.bn3(self.conv3(out)))
+        out = out.view(batch_size, -1)
+        out = self.relu(self.bn4(self.fc1(out)))
+        mean = self.fc_mean(out)
+        log_variance = self.fc_log_variance(out)
+
+        return mean, log_variance
+
+
+class Decoder(nn.Module):
+
+    """
+    Decoder network for VAE.
+
+    This class defines the architecture of the decoder network, which takes a sample
+    from the latent space and produces a reconstructed image.
+
+    Attributes:
+        - fc1 (nn.Linear): Fully connected layer.
+        - bn1 (nn.BatchNorm1d): Batch normalization for the fully connected layer.
+        - relu (nn.LeakyReLU): Leaky ReLU activation function.
+        - deconv1 (nn.ConvTranspose2d): First transposed convolutional layer.
+        - bn2 (nn.BatchNorm2d): Batch normalization for the first deconvolutional layer.
+        - deconv2 (nn.ConvTranspose2d): Second transposed convolutional layer.
+        - bn3 (nn.BatchNorm2d): Batch normalization for the second deconvolutional layer.
+        - deconv3 (nn.ConvTranspose2d): Third transposed convolutional layer.
+        - tanh (nn.Tanh): Hyperbolic tangent activation function.
+
+    Methods:
+        - forward(x): Forward pass of the decoder network. Takes a latent space sample and
+          produces a reconstructed image.
+
+    """
+
+
+    def __init__(self):
+        super(Decoder, self).__init__()
+        self.fc1 = nn.Linear(128, 256 * 16 * 16)
+        self.bn1 = nn.BatchNorm1d(256 * 16 * 16, momentum=0.9)
+        self.relu = nn.LeakyReLU(0.2)
+        self.deconv1 = nn.ConvTranspose2d(256, 128, 5, stride=2, padding=2)
+        self.bn2 = nn.BatchNorm2d(128, momentum=0.9)
+        self.deconv2 = nn.ConvTranspose2d(128, 128, 5, stride=2, padding=2)
+        self.bn3 = nn.BatchNorm2d(128, momentum=0.9)
+        # self.deconv3 = nn.ConvTranspose2d(128, 1, 5, stride=2, padding=2)
+        self.deconv3 = nn.ConvTranspose2d(128, 1, 5, stride=2, padding=2, output_padding=1)
+        self.tanh = nn.Tanh()
+
+    def forward(self, x):
+
+        """
+        Forward pass of the decoder network.
+
+        Args:
+            x (torch.Tensor): Input tensor - sample from the latent space.
+
+        Returns:
+            reconstructed_image (torch.Tensor): Reconstructed image.
+        """
+
+
+        batch_size = x.size()[0]
+        x = self.relu(self.bn1(self.fc1(x)))
+        x = x.view(-1, 256, 16, 16)
+        x = self.relu(self.bn2(self.deconv1(x)))
+        x = self.relu(self.bn3(self.deconv2(x)))
+        x = self.tanh(self.deconv3(x))
+        return x
+
+# Initialize Encoder and Decoder instances
+encoder = Encoder()
+decoder = Decoder()
+
+# Function to count parameters in a model
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+# Count and print parameters for the Encoder
+print("Encoder:")
+for name, param in encoder.named_parameters():
+    if param.requires_grad:
+        print(f"{name}: {param.numel()} parameters")
+
+# Count and print parameters for the Decoder
+print("\nDecoder:")
+for name, param in decoder.named_parameters():
+    if param.requires_grad:
+        print(f"{name}: {param.numel()} parameters")
+
+# Total trainable parameters
+total_parameters = count_parameters(encoder) + count_parameters(decoder)
+print(f"\nTotal Trainable Parameters: {total_parameters}")

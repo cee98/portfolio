@@ -1,0 +1,66 @@
+#Import neccessary modules and libraries
+
+import os
+import torch
+import torch.nn as nn
+import torchvision
+import torchvision.transforms as transforms
+import numpy as np
+import nibabel as nib
+import matplotlib.pyplot as plt
+
+import torch.nn.functional as F
+
+import glob
+from os.path import join
+from os import listdir
+from pathlib import Path
+
+
+from torch import optim
+from torch.utils.data.dataset import Dataset
+from torch.utils.data.dataloader import DataLoader
+from torchvision import datasets, transforms
+from torch.utils.data.sampler import SubsetRandomSampler
+from torch.utils.data import DataLoader
+import torch.utils.data as data
+from torch.nn.modules.loss import L1Loss
+from torch.nn.modules.loss import MSELoss
+
+from collections import OrderedDict
+
+from torch.autograd import Variable
+torch.autograd.set_detect_anomaly(True)
+
+from torchvision.utils import make_grid , save_image
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+from sklearn.model_selection import train_test_split
+
+
+
+
+def load_save_img(file_name, img):
+    # Normalize the image data to the [0, 1] range
+    img = (img - img.min()) / (img.max() - img.min())
+    npimg = np.transpose(img.numpy())
+    #npimg = np.transpose(img.numpy(), (1, 2, 0))
+    f = "./%s.png" % file_name
+    #plot image
+    fig = plt.figure(dpi=200)
+    fig.suptitle(file_name, fontsize=14, fontweight='bold')
+    plt.imshow(npimg)
+    plt.imsave(f, npimg)
+
+def plot_loss(loss_list, title1="Loss During Training"):
+    #plot loss graph
+    plt.figure(figsize=(10,5))
+    plt.title("Loss During Training")
+    plt.plot(loss_list,label="Loss")
+
+    plt.text(0.5, 1.1, title1, size=12, ha="center", transform=plt.gca().transAxes)
+
+    plt.xlabel("iterations")
+    plt.ylabel("Loss")
+    plt.legend()
+    plt.show()
