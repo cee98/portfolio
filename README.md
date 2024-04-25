@@ -13,3 +13,6 @@
   - 0 - background pixel
 <img width="1000" alt="Screenshot 2024-03-14 at 22 33 32" src="https://github.com/cee98/portfolio/assets/112065175/145afe17-fc54-405d-b2d6-4869a5a52220">
 
+## VAE-GAN-XRay [click here](https://github.com/cee98/VAE-GAN-XRay)
+- Implementing and validating a VAE-GAN as per the original paper by ABL Larsen et al.
+![image](https://github.com/cee98/VAE-GAN-XRay/assets/112065175/b90598d1-0289-4a2e-9bad-c3783644217e)
