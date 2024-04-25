@@ -7,7 +7,7 @@ sMRI is important to measure therapies' effect on vital brain structures or over
 However, deriving volumetric information is dependent on segmentation, which provides variable results depending on which segmentation software is used(7). Additionally, atrophy mainly occurs in the later stages of AD, so would not be useful for detecting the early asymptomatic stages of AD (8), whereas amyloid markers in the CSF would be more suitable(1). Also, volumetric information, such as medical temporal atrophy, is not specific enough to differentiate between all dementias, so is often combined with CSF biomarkers for a more accurate diagnosis (1).
 sMRI is a validated biomarker for assessing MCI and AD, despite its limitations in assessing the early stages of AD. More robust and automated algorithms for volumetric analysis of brain structures are needed to develop a standardised practice of acquiring accurate volumetric measurements to predict AD and implement treatment at an earlier stage.Longitudinal studies are required to determine the most accurate combination of biomarkers to use for diagnosing AD cases earlier and measuring clinical trial outcomes.
 
-# References
+### References
 1. Frisoni GB, Fox NC, Jack CR, Scheltens P, Thompson PM. The clinical use of structural MRI in Alzheimer disease. Nat Rev Neurol. 2010 Feb;6(2):67–77.
 2. Whitwell JL, Josephs KA, Murray ME, Kantarci K, Przybelski SA, Weigand SD, et al. MRI correlates of neurofibrillary tangle pathology at autopsy: A voxel-based morphometry study. Neurology. 2008 Sep 2;71(10):743–9.
 3. Jack CR, Holtzman DM. Biomarker Modeling of Alzheimer’s Disease. Neuron. 2013 Dec;80(6):1347–58.
